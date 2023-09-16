@@ -1,14 +1,13 @@
 let textToSpeech = true;
+let tts_active = false;
 let colorBlind = false;
 let zoom = false;
 let screenshot = false;
 let AI = false;
 
 
-
 function handleSubmit() {
   const selectedOption = document.getElementById("accessibility-options").value;
-
 
 
   // Enable screen reader settings
@@ -18,6 +17,7 @@ function handleSubmit() {
     zoom = false;
     screenshot = false;
     AI = false;
+    covertScreenText();
   }
 
   // Enable colorblind settings
@@ -62,37 +62,37 @@ function handleSubmit() {
   }
 }
 
+function covertScreenText() {
+  chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+    const activeTab = tabs[0];
+    readTextOnPage(activeTab);
+  });
+}
+
+function readTextOnPage(activeTab) {
+  chrome.scripting.executeScript(
+    {
+      target: { tabId: activeTab.id },
+      function: function () {
+        const elements = document.querySelectorAll("h1, p");
+
+        const textToRead = Array.from(elements)
+          .map((element) => element.textContent)
+          .join(". ");
+        
+        chrome.runtime.sendMessage({ message: "tts", text: textToRead });
+      }
+    }
+  );
+}
+  
 
 // Event listener to handle screenshot button click
-document.getElementById("screenshot-button").addEventListener("click", () => {
-  handleSubmit();
+document.addEventListener("DOMContentLoaded", function () {
+  document.getElementById("screenshot-button").addEventListener("click", () => {
+    handleSubmit();
+  });
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 // Define the getAllHTMLContent function
@@ -177,12 +177,6 @@ async function parse() {
       console.error(error);
     }
 };
-
-
-
-
-
-
 
 
 function changeBackgroundColor() {
