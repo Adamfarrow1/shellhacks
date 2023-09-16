@@ -139,7 +139,7 @@ function getAllHTMLContent() {
 
 async function parse() {
     // This function will be awaited before the next line of code is executed
-  
+      if(!AI) return
     try {
   
       getAllHTMLContent();
@@ -151,7 +151,7 @@ async function parse() {
 
       const headers = new Headers();
       headers.append("Content-Type", "application/json");
-      // headers.append("Authorization", `Bearer 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`);
+      headers.append("Authorization", `Bearer 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`);
       
       const requestBody = JSON.stringify({
         model: 'text-davinci-003',
@@ -168,6 +168,7 @@ async function parse() {
       // Check if the response status is OK (status code 200)
       if (response.ok) {
         const responseData = await response.json();
+        console.log(responseData);
         console.log(responseData.choices[0].text);
       } else {
         console.error(response);
