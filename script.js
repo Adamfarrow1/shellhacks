@@ -1,72 +1,65 @@
-const button = document.getElementById("button");
+// Define the getAllHTMLContent function
+let pageHTML = "";
 
-function getAllTextFromWebpageWithoutTags() {
-  let text = '';
 
-  function extractText(node) {
-    // Skip script and style elements
-    if (node.nodeName === 'SCRIPT' || node.nodeName === 'STYLE') {
-      return;
-    }
+function getAllHTMLContent() {
+  chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+    const activeTab = tabs[0];
+    chrome.scripting.executeScript(
+      {
+        target: { tabId: activeTab.id },
+        function: function () {
+          const textContent = [];
+          const treeWalker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
 
-    // If the node is a text node, append its content to the result
-    if (node.nodeType === Node.TEXT_NODE) {
-      text += node.textContent;
-    }
+          while (treeWalker.nextNode()) {
+            const node = treeWalker.currentNode;
+            const parent = node.parentNode;
 
-    // Recursively process child nodes
-    if (node.childNodes) {
-      for (const childNode of node.childNodes) {
-        extractText(childNode);
+            if (parent && parent.nodeType === Node.ELEMENT_NODE) {
+              const tagName = parent.tagName.toLowerCase();
+              if (tagName !== 'script' && tagName !== 'style' && tagName !== 'p') {
+                // Exclude text within <script> and <style> tags
+                textContent.push(node.textContent.trim());
+              }
+            }
+          }
+
+          return textContent.join('\n');
+        },
+      },
+      function (result) {
+        pageHTML = result[0].result;
+        // console.log('HTML Content of the Page:', pageHTML); // Log the HTML content to the console
       }
-    }
-  }
-
-  // Start extracting text from the entire document body
-  extractText(document.body);
-
-  // Remove leading and trailing whitespace
-  text = text.trim();
-
-  return text;
+    );
+  });
 }
 
 
 
+// Call the function to retrieve HTML content when the extension icon is clicked (optional)
 
 button.addEventListener("click", async function() {
     // This function will be awaited before the next line of code is executed
-
+  
     try {
-      
-      var paragraphTexts = document.documentElement.outerHTML;
-    //    const paragraphs = document.querySelectorAll('a');
-    // // Create an array to store the inner text of <p> tags
-    // const paragraphTexts = [];
-
-    // // Loop through the selected <p> tags and extract their inner text
-    //   paragraphs.forEach(paragraph => {
-    //     // Get the inner text of each <p> tag and push it to the array
-    //     const text = paragraph.innerText;
-    //     paragraphTexts.push(text);
-    //   });
-
-      console.log(paragraphTexts);
-
-
-
-
-
-
+  
+      getAllHTMLContent();
+      if(!pageHTML) getAllHTMLContent();
+      // pageHTML.replace(/[\s\n]+/g, '');
+      if (pageHTML.length > 2000) {
+        pageHTML = pageHTML.substring(0, 2000); // Trim to the first 500 characters
+      }
 
       const headers = new Headers();
       headers.append("Content-Type", "application/json");
-      headers.append("Authorization", `Bearer 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`);
+      headers.append("Authorization", `Bearer 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`);
       
       const requestBody = JSON.stringify({
         model: 'text-davinci-003',
-        prompt: "summarize the text that is within this HTML file: " + paragraphTexts,
-        max_tokens: 100
+        prompt: "summarize the text (ignore advertisments) (only summarize what it is talked about the most) (make the summary 5 to 6 sentences): " + pageHTML,
+        max_tokens: 300
       });
 
       const response = await fetch('https://api.openai.com/v1/completions', {
