@@ -1,33 +1,33 @@
-/*
-var form = document.getElementById("form");
-function handleForm(event) { event.preventDefault(); }
-form.addEventListener('submit', handleForm);
+const button = document.getElementById("button");
 
-let HTML_text = "";
-*/
+button.addEventListener("click", async function() {
+    // This function will be awaited before the next line of code is executed
 
-import openai from 'openai';
+    try {
+      const headers = new Headers();
+      headers.append("Content-Type", "application/json");
+      headers.append("Authorization", `Bearer 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`);
+      
+      const requestBody = JSON.stringify({
+        model: 'text-davinci-003',
+        prompt: "hello",
+        max_tokens: 100
+      });
 
-// Replace this with your OpenAI API key
-const apiKey = process.env.API_KEY;
+      const response = await fetch('https://api.openai.com/v1/completions', {
+        method: 'POST',
+        headers: headers,
+        body: requestBody
+      });
 
-// Create an OpenAI client
-const client = new openai.Client(apiKey);
-
-// Define a function to send a request to the ChatGPT API
-async function chatgptRequest(prompt) {
-  const response = await client.completion.create({
-    engine: 'davinci',
-    text: prompt,
-    prompt: 'ChatGPT: ',
-    temperature: 0.5,
-    maxTokens: 100,
-  });
-  return response.choices[0].text;
-}
-
-
-async function chatgpt(prompt) {
-  const response = await chatgptRequest(prompt);
-  return response;
-}
+      // Check if the response status is OK (status code 200)
+      if (response.ok) {
+        const responseData = await response.json();
+        console.log(responseData.choices[0].text);
+      } else {
+        console.error(response);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+});
