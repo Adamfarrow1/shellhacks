@@ -1,76 +1,102 @@
-.html-body{
-  width: 15em;
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap');
+
+@keyframes gradientBG {
+  0% {
+      background-position: 0% 50%;
+  }
+  50% {
+      background-position: 100% 50%;
+  }
+  100% {
+      background-position: 0% 50%;
+  }
 }
 
-.container {
+body {
+  font-family: 'Roboto', sans-serif;
+  background: linear-gradient(270deg, #2a2a2a, #1a1a1a, #3f3f3f);
+  background-size: 200% 200%;
+  animation: gradientBG 15s infinite;
+  color: #ffffff;
+  height: 90vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  transition: all 0.3s;
+  transform: translateY(0);
+  will-change: transform;
+}
+
+body:hover {
+  transform: translateY(-1%);
+}
+
+
+.containerShell {
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
-  padding: 20px;
-  width:100%;
-  text-align: center;
+  width: 200px;
+  height: 200px;
+  padding: 30px;
+  border-radius: 0px;
+  background: linear-gradient(145deg, #3f3f3f, #1a1a1a);
+  box-shadow: 6px 6px 12px #0a0a0a, -6px -6px 12px #444444;
 }
 
-h1 {
-  font-size: 20px;
-  margin-bottom: 10px;
-  font-family: Arial;
+#logo_img {
+  width: 110px;
+  height: 110px;
+  margin-bottom: 0px;
+  border-radius: 50%;
+  transition:  0.4s;
 }
 
-button {
-  background-color: #9900ff;
-  color: white;
+#logo_img:hover {
+  transform: scale(1.1) rotate(15deg);
+}
+
+select, button {
+  background-color: #333;
+  color: #ffffff;
   padding: 14px 20px;
   border: none;
-  border-radius: 4px;
+  border-radius: 50px;
   cursor: pointer;
   margin-top: 20px;
+  outline: none;
+  transition: background-color 0.3s, transform 0.3s;
 }
 
-/* Add styles for the menu items */
-.menu {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: 20px;
-  width: 100%;
-}
-
-.menu-item {
-  background-color: #ddd;
-  color: #333;
-  padding: 10px 20px;
-  border-radius: 4px;
-  cursor: pointer;
-  margin-bottom: 10px;
-  width:100%;
-  
-}
-
-/* Add styles for the popup */
-.container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 20px;
-}
-
-img{
-  width: 300px;
-  height: 100px;
-}
-
-h1 {
-  font-size: 20px;
-  margin-bottom: 10px;
-}
-
-select {
+select:hover, button:hover {
   background-color: #9900ff;
-  color: white;
-  padding: 14px 20px;
-  border: none;
-  border-radius: 4px;
+  transform: translateY(-5px);
+}
+
+button:active {
+  background-color: #7700cc;
+  transform: translateY(0);
+}
+
+.futuristic {
+  font-family: 'Roboto', sans-serif;
+  font-size: 2em;
+  color: #ffffff;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  background: -webkit-linear-gradient(left, #00f, #f00);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: rgba(0, 0, 0, 0.7);
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.5), 0 0 10px rgba(255, 255, 255, 0.7), 0 0 15px rgba(255, 0, 255, 0.8), 0 0 20px rgba(0, 255, 255, 0.8);
+  transition: all 0.5s ease-in-out;
+  display: inline-block;
+  position: relative;
   cursor: pointer;
-  margin-top: 20px;
+}
+
+.futuristic:hover {
+  transform: scale(1.05) skew(-10deg);
 }
