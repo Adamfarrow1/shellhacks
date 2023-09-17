@@ -157,7 +157,7 @@ async function getAllHTMLContent() {
       {
         target: { tabId: activeTab.id },
         function: function () {
-           const textContent = [];
+          const textContent = [];
           const treeWalker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
 
           while (treeWalker.nextNode()) {
@@ -166,15 +166,29 @@ async function getAllHTMLContent() {
 
             if (parent && parent.nodeType === Node.ELEMENT_NODE) {
               const tagName = parent.tagName.toLowerCase();
-              if (tagName !== 'script' && tagName !== 'style' && tagName !== 'p') {
+              if (tagName !== 'script' && tagName !== 'style') {
                 // Exclude text within <script> and <style> tags
                 const trimmedText = node.textContent.trim();
-                if (trimmedText) {
-                  // Skip empty text nodes
+                if (trimmedText && !isLikelyURL(trimmedText) && !isLessThanThreeWords(trimmedText)) {
+                  // Skip empty text nodes and text that looks like a URL
                   textContent.push(trimmedText);
                 }
               }
             }
+          }
+
+          function isLessThanThreeWords(input) {
+            // Split the input string into words using a regular expression
+            const words = input.split(/\s+/).filter(word => word.trim() !== '');
+          
+            // Check if the number of words is less than 3
+            return words.length < 5;
+          }
+
+          function isLikelyURL(text) {
+            // A simple check for text that looks like a URL
+            const urlPattern = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i;
+            return urlPattern.test(text);
           }
 
           return textContent.join('\n');
@@ -182,11 +196,12 @@ async function getAllHTMLContent() {
       },
       function (result) {
         pageHTML = result[0].result;
-        // console.log('HTML Content of the Page:', pageHTML); // Log the HTML content to the console
+        // console.log('HTML Content of the Page (excluding URLs):', pageHTML);
       }
     );
   });
 }
+
 
 
 
@@ -205,11 +220,11 @@ async function parse() {
     if(!pageHTML) return;
     const headers = new Headers();
     headers.append("Content-Type", "application/json");
-    headers.append("Authorization", `Bearer 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`);
+    headers.append("Authorization", `Bearer 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`);
     console.log(pageHTML)
     const requestBody = JSON.stringify({
       model: 'text-davinci-003',
-      prompt: "summarize the text (ignore advertisments) (only summarize what it is talked about the most) (max characters is 100) (dont include extra symbols) (only answer with complete sentences). If there is no text given as input after this sentence, do not respond: " + pageHTML,
+      prompt: "summarize the text (ignore advertisments) (only summarize the topic that are mentioned the most) (max characters is 100) (dont include extra symbols) (ignore words that are not full sentences) (always start with a complete sentence in your response) (only answer with complete sentences). If there is no text given as input after this sentence, do not respond: " + pageHTML,
       max_tokens: 50
     });
 
@@ -298,7 +313,7 @@ async function parse2() {
     if(!pageHTML) return;
     const headers = new Headers();
     headers.append("Content-Type", "application/json");
-    headers.append("Authorization", `Bearer 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`);
+    headers.append("Authorization", `Bearer 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`);
 
     let userInput = document.getElementById('user-input').value;
     let promptText = userInput ? userInput : "You are at the knowledge level of an elite college professor. Your task is to only give a numbered list of up to 5 of short key concepts based on the following text provided. Ignore ads and keep the entire message short. If there are not at least 4 topics, add related topics to the list. Before listing the topics, introduce yourself as a personal learning assistant. Inside the response, ask the user which topic they would like to learn about. Always create a new line in the output before and after listing the topics. Always start with a complete sentence greeting without any extra symbols or characters. Here are a couple examples of the propper output: Hello! I am your personal learning assistant. Here are some key concepts of the website you are on: 1.How to steer 2. Using the break 3. Using the gas 4. Turning 5. Drifting What topic would you like to dive into? Hey, it's your learning assistant, which of the following topics do you want to learn more about: 1. Hitler 2. Auschwitz 3. 1945 Germany 4. Judaism 5. Holocaust aftermath (dont include extra symbols) (only answer with complete sentences). Do not use any extra symbols or characters. Never output a jpg, extra characters, extra symbols or any links. here is the text you must use:" + pageHTML
