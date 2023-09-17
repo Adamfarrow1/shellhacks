@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>AccessAble</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <style>
+        /* Inline styles moved to head */
+        #user-response-section {
+            display: none;
+        }
+    </style>
+</head>
+
+<body class="bodyshell">
+    <div class="containerShell">
+        <p class="futuristic" id="learning">SurfSimpli</p>
+        <p id="sum-results"></p>
+        <!-- You can uncomment this when you have a new logo ready
+        <img id="logo_img" src="logo.png" alt="Logo">
+        -->
+
+        <!-- Accessibility options dropdown -->
+        <div>
+            <select id="accessibility-options">
+                <option value="Screen Reader">Text to Speech</option>
+                <option value="Colorblind Mode">Colorblind</option>
+                <option value="blue-Light">Blue Light Filter</option>
+                <option value="AI">Summary</option>
+                <option value="Learning">Learning</option> <!-- Changed from screenshot -->
+                <option value="Captioning">Captioning</option>
+            </select>
+        </div>
+
+        <button id="screenshot-button">ACTIVATE</button>
+        
+        <!-- User response section (initially hidden) -->
+        <div id="user-response-section">
+            <input type="text" class="response" id="user-input" placeholder="Enter your response...">
+            <button id="send-response">Send Response</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
