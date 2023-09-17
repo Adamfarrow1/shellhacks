@@ -140,15 +140,14 @@ function getAllHTMLContent() {
 async function parse() {
     // This function will be awaited before the next line of code is executed
       if(!AI) return
-    try {
-  
-      getAllHTMLContent();
+      await getAllHTMLContent();
       if(!pageHTML) getAllHTMLContent();
       // pageHTML.replace(/[\s\n]+/g, '');
       if (pageHTML.length > 2000) {
         pageHTML = pageHTML.substring(0, 2000); // Trim to the first 500 characters
       }
-
+      if(!pageHTML) return;
+    try {
       const headers = new Headers();
       headers.append("Content-Type", "application/json");
       headers.append("Authorization", `Bearer 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`);
