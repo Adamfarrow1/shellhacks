@@ -27,7 +27,6 @@
 //     chatgptRequest("12");
 //   });
 
-// background.js (background script)
 
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   console.log(message)
