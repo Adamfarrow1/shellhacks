@@ -9,7 +9,7 @@ let AI = false;
 function handleSubmit() {
   const selectedOption = document.getElementById("accessibility-options").value;
 
-
+  
 
   // Enable screen reader settings
   if (selectedOption === "Screen Reader") {
@@ -67,6 +67,13 @@ function handleSubmit() {
 // Event listener to handle screenshot button click
 document.getElementById("screenshot-button").addEventListener("click", () => {
   handleSubmit();
+});
+
+
+document.getElementById("accessibility-options").addEventListener("change", () => {
+  // When the "accessibility-options" element changes, this arrow function is executed
+  // Clear the content of the "sum-results" element by setting its innerHTML to an empty string
+  document.getElementById("sum-results").innerHTML = '';
 });
 
 
@@ -130,7 +137,7 @@ function readTextOnPage(activeTab) {
 let pageHTML = "";
 
 
-function getAllHTMLContent() {
+async function getAllHTMLContent() {
   chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
     const activeTab = tabs[0];
     chrome.scripting.executeScript(
@@ -175,22 +182,22 @@ function getAllHTMLContent() {
 async function parse() {
     // This function will be awaited before the next line of code is executed
       if(!AI) return
-      getAllHTMLContent();
+      await getAllHTMLContent();
       if(!pageHTML) getAllHTMLContent();
       // pageHTML.replace(/[\s\n]+/g, '');
       if (pageHTML.length > 2000) {
         pageHTML = pageHTML.substring(0, 2000); // Trim to the first 500 characters
       }
     try {
-
+      if(!pageHTML) return;
       const headers = new Headers();
       headers.append("Content-Type", "application/json");
-      headers.append("Authorization", `Bearer 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`);
+      headers.append("Authorization", `Bearer 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`);
       
       const requestBody = JSON.stringify({
         model: 'text-davinci-003',
-        prompt: "summarize the text (ignore advertisments) (only summarize what it is talked about the most) (make the summary 5 to 6 sentences). If there is no text given as input after this sentence, do not respond: " + pageHTML,
-        max_tokens: 300
+        prompt: "summarize the text (ignore advertisments) (only summarize what it is talked about the most) (make the summary 4 to 5 sentences). If there is no text given as input after this sentence, do not respond: " + pageHTML,
+        max_tokens: 100
       });
 
       const response = await fetch('https://api.openai.com/v1/completions', {
@@ -200,10 +207,11 @@ async function parse() {
       });
 
       // Check if the response status is OK (status code 200)
-      if (response.ok) {
+      if (response.ok && pageHTML) {
         const responseData = await response.json();
         console.log(responseData);
         console.log(responseData.choices[0].text);
+        document.getElementById("sum-results").innerHTML = responseData.choices[0].text
       } else {
         console.error(response);
       }
