@@ -112,6 +112,7 @@ document.getElementById("send-response").addEventListener("click", handleUserInp
 
 
 
+
 // SUMMARY _____________________________________________________________________________________________
 
 
@@ -382,3 +383,29 @@ async function toggleBlueLightFilter() {
   }  
 }
 
+
+// SCREEN READER  __________________________________________________________________________________________________
+
+function covertScreenText() {
+  chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+    const activeTab = tabs[0];
+    readTextOnPage(activeTab);
+  });
+}
+
+function readTextOnPage(activeTab) {
+  chrome.scripting.executeScript(
+    {
+      target: { tabId: activeTab.id },
+      function: function () {
+        const elements = document.querySelectorAll("h1, h2, p");
+
+        const textToRead = Array.from(elements)
+          .map((element) => element.textContent)
+          .join(". ");
+
+        chrome.runtime.sendMessage({ type: "tts", text: textToRead });
+      }
+    }
+  );
+}
