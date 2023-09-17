@@ -19,7 +19,6 @@
   animation: gradientBG 15s infinite;
   color: #ffffff;
   width: 220px;
-  height: 250px;
   height: 90vh;
   display: flex;
   align-items: center;
@@ -36,8 +35,6 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  width: 200px;
-  height: 350px;
   padding: 30px;
   border-radius: 0px;
   background: linear-gradient(145deg, #3f3f3f, #1a1a1a);
